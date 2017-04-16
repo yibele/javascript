@@ -72,23 +72,45 @@
         var s = 'Test' ; s[0] = 'X' ; alert(s); // s仍然是'Test'
 
         *javascript 为字符串提供了一些常用得方法， 注意， 调用这些方法本身不会改变原有字符串，而是返回一个新的字符串*
-    
-        > toUpperCase() 方法， 把一个字符串全部变成大写：
+```    
+        toUpperCase() 方法， 把一个字符串全部变成大写：
         var s = 'hello' ; s.toUpperCase() ；//  HELLO;
         
-        > toLowerCase() 方法， 把一个字符串全变成小写;
+        toLowerCase() 方法， 把一个字符串全变成小写;
         var s = 'Hellow' ; s.toLowerCase() ; // hellow
 
-        > indexOf() 方法, 把一个字符串出现的第一个位置返回; 如果没有找到返回 -1 区分大小写
+        indexOf() 方法, 把一个字符串出现的第一个位置返回; 如果没有找到返回 -1 区分大小写
         var s = 'hello word';  s.indexOf('world'); //返回 7   s.indexOf('World')// 没有找到返回 -1
 
-        > substring() 返回制定索引区间的子串:
+        substring() 返回制定索引区间的子串:
         var s = 'hello word' ; s.substring(0,5)  // 从所以0开始到5 不包括5 返回 'hello'
         s.substring(7); //从索引7 开始到结束 // 返回'world'
+```
+4. Array: javascript 的Array 可以包含任意类型， 并通过所以访问每个元素;
 
-4. Array:
+    + 要获得Array 的长度，直接访问length 属性：
+    ` var s =[1,2,3,4,5] ; s.length; //5 `
+    *请注意* 如果更改Array的length属性， 会更改Array的大小的变化:
+    ```
+    var arr = [1,2,3,4];
+    arr.length; //4
+    arr.length = 6;
+    arr; // arr变为[1,2,3,undefined,undefined,undefined]
+    arr.length = 2; // [1,2]
 
-    + 
+    ```
+
+    + Array 赋值可以通过索引进行修改 
+    `var arr = [1,2,3,4] ;  arr[0] = 102 ; //[102,2,3,4]`
+    *请注意* 如果索引的超过了范围， 那么会引起 Array的大小变化：
+    ` arr[8] = 'x' ; // [1,2,3,4,undefined,undefined,x]`
+
+    + indexOf() 跟String类似，Array也可以通过indexOf（） 来搜索一个指定的元素的位置：
+        arr.indexOf(100); //元素100 的索引为 20  ; arr.indexOf(102);
+        arr.indexOf('30') ; // 元素 '30' 的索引为 2
+
+
+    
 
 
     
