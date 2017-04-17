@@ -265,71 +265,71 @@ m.forEach(function(element){
 
 ## 3. 变量 
 ### 3.1 变量的类型
-    + javascript 中的变量是无类型的(untype) , 这以为着它可以存放任何的值; 例如 javascript 中, 可以先把一个数字赋值给
-    变量,然后再把一个字符赋值给它.
-        ```
-        i = 10 ;        typeof(i)  返回 'number'
-        i = 'ten';      typeof(i)   返回'string'  
-        ```
-    + javascript 可以快速,自动的将一种类型转换成另外一种类型; 甚至可以 将一个字符串加在数字上; 如下:
-    这种特性也让我产生了怀疑, 如果字符串是 '数字' 的形式的话会出现什么样子的结果,于是试验了一下,
-        ```
-        var i =10;
-        var j = '20'; 
-        j+i = '2010' ;
-        i+j = '1020';
-        这个时候想到 Number 对象和 String 对象的相加结果
++ javascript 中的变量是无类型的(untype) , 这以为着它可以存放任何的值; 例如 javascript 中, 可以先把一个数字赋值给
+变量,然后再把一个字符赋值给它.
+    ```
+    i = 10 ;        typeof(i)  返回 'number'
+    i = 'ten';      typeof(i)   返回'string'  
+    ```
++ javascript 可以快速,自动的将一种类型转换成另外一种类型; 甚至可以 将一个字符串加在数字上; 如下:
+这种特性也让我产生了怀疑, 如果字符串是 '数字' 的形式的话会出现什么样子的结果,于是试验了一下,
+    ```
+    var i =10;
+    var j = '20'; 
+    j+i = '2010' ;
+    i+j = '1020';
+    这个时候想到 Number 对象和 String 对象的相加结果
 
-        a = new Number()
-        b = new String()
-        typeof(a+b) ;    返回的结果是 'string'
-    ``` 
-    + 字符串和数字相加, 结果是字符串 ;此时又想到如果 数组 和 字符串相加是什么结果?  数组加上数字什么结果? 继续试验;
-        ```
-        var a = [1,2,3,4]
-        var b ='string'
-        typeof(a+b)  ;  返回结果是 'string' !
-        a+b  ;  返回结果'1,2,3,4string'
-        var c = 102
-        a+c  '1,2,3,4102'
+    a = new Number()
+    b = new String()
+    typeof(a+b) ;    返回的结果是 'string'
+``` 
++ 字符串和数字相加, 结果是字符串 ;此时又想到如果 数组 和 字符串相加是什么结果?  数组加上数字什么结果? 继续试验;
+    ```
+    var a = [1,2,3,4]
+    var b ='string'
+    typeof(a+b)  ;  返回结果是 'string' !
+    a+b  ;  返回结果'1,2,3,4string'
+    var c = 102
+    a+c  '1,2,3,4102'
 
-        var a = {name:1,age:2}
-        a+c ;  返回的是 '[object object]102'
-        (a+c).length   返回的是18 
-        ```
-    + **结论** 不论是数组, 数字, 还是字符串, 相加之前全部先转换成字符串, 然后在进行相加;
+    var a = {name:1,age:2}
+    a+c ;  返回的是 '[object object]102'
+    (a+c).length   返回的是18 
+    ```
++ **结论** 不论是数组, 数字, 还是字符串, 相加之前全部先转换成字符串, 然后在进行相加;
 ### 3.2 变量的声明
-    + javascript 使用一个变量前必须先声明! 变量的生命是使用关键字var 声明的, 如下:
-        ```
-        var i;
-        var sum;
-        var i,sum;
-        var message = 'message';
-        var i =0,i=0,k=0;
-        ```
-    + 变量的生命是永久性的, 也就是说如果用delete运算符来删除这些变量的话, 会引发错误!
-        `delete a`   返回 false
++ javascript 使用一个变量前必须先声明! 变量的生命是使用关键字var 声明的, 如下:
+    ```
+    var i;
+    var sum;
+    var i,sum;
+    var message = 'message';
+    var i =0,i=0,k=0;
+    ```
++ 变量的生命是永久性的, 也就是说如果用delete运算符来删除这些变量的话, 会引发错误!
+    `delete a`   返回 false
 #### 3.2.1 重复的声明和遗漏的声明
-    + 重复声明合法
-    + 如果没有用var 声明变量, 那么这个变量将成为全局变量, 不仅在函数体内, 在函数体外也将声明
-        ```
-        var a = function(){
-            for(i =1;i<10;i++){
-            }
-        };
-        a();
-        console.log(i+1);  返回的 11
-        ```
++ 重复声明合法
++ 如果没有用var 声明变量, 那么这个变量将成为全局变量, 不仅在函数体内, 在函数体外也将声明
+    ```
+    var a = function(){
+        for(i =1;i<10;i++){
+        }
+    };
+    a();
+    console.log(i+1);  返回的 11
+    ```
 ### 3.3 变量的作用域
-    + 局部变量的优先级高于全剧变量, 如果两个变量名字相同, 那么局部变量会有效的隐藏全局变量!
-        ```
-        var scope = 'global';
-        function checkscope(){
-            var scope = 'local';
-            console.log(scope);
-            }
-        checkscope();    输出 'local'
-        ```
++ 局部变量的优先级高于全剧变量, 如果两个变量名字相同, 那么局部变量会有效的隐藏全局变量!
+    ```
+    var scope = 'global';
+    function checkscope(){
+        var scope = 'local';
+        console.log(scope);
+        }
+    checkscope();    输出 'local'
+    ```
 #### 3.3.1 没有级块的作用域
     + 函数中定义的所有变量,无论在哪里声明,在哪里都是有定义的!
         ```
