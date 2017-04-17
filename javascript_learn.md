@@ -1,8 +1,7 @@
 # javascript学习手册
-## javascriopt 快速入门：
-### 基本语法：
+## 1.基本语法：
 -----
-### 数据类型： 下面所说的数据类型中 Number， string，array ，对象， 都跟变量有区别！
+## 2.数据类型： 下面所说的数据类型中 Number， string，array ，对象， 都跟变量有区别！
 -----
 + Number: javascript 不区分整形和浮点数，统一用Number表示，一下都是合法的Number类型：
     123;//整数123 0.456;//浮点数 NaN: //表示 Not a Number，当无法计算结果是用NaN表示；
@@ -13,12 +12,8 @@
 + 布尔值: 
 
 + 比较运算符: 需要注意的是（==） 和（===）不相同， 在javascript 中 == 会自动转换类型在
-    进行比较，很多时候回得到非常诡异的结果， === 不会自动转换私自类型，最好不要使用==进行比较。
-    另一个例外的是，NaN 跟任何Number值都不相等，包括它自己；
-
-+ 数组  [] :javascript 的数字可以包含任何的数据类型，包括变量，funciton.
-
-+ 对象  {}: javascript 的对象是一组有 键值对组成的无序集合， 例如：
+    进行比较，很多时候回得到非常诡异的结果， === 不会自动转换私自类型，最好不要使用==进行比较。 另一个例外的是，NaN 跟任何Number值都不相等，包括它自己； 
++ 数组  [] :javascript 的数字可以包含任何的数据类型，包括变量，funciton.  + 对象  {}: javascript 的对象是一组有 键值对组成的无序集合， 例如：
 ```
     var = person{
         name:'yibu',
@@ -90,8 +85,7 @@
     s.substring(7); //从索引7 开始到结束 // 返回'world'
 ```
 ### Array: javascript 的Array 可以包含任意类型， 并通过所以访问每个元素;
-----
-+ 要获得Array 的长度，直接访问length 属性：
+---- + 要获得Array 的长度，直接访问length 属性：
 ` var s =[1,2,3,4,5] ; s.length; //5 `
 *请注意* 如果更改Array的length属性， 会更改Array的大小的变化:
 ```
@@ -245,6 +239,190 @@ for (var x of m){
     alert(x[0] + '=' + x[1])
 }
 ```
+
++ 然而更好地方法是直接使用iterable 内置的 forEach 方法, 接受一个函数, 以Array 为例:
+```
+var a = ['A','B','C']
+a.forEach(function(element, index, array){
+        alert(element)
+});
+```
+**总结:** element 为 Array 的 值,依次输出, 在上述例子中为 A,B,C . index  为数组的索引 0,1,2  array: 是数组本身 , 但是循环输出四次
+
++ Map 的回调函数参数一次为 value, key 和 Map 本身
+``` 
+var m = new Map([['name','yibu'],['age',20]]);
+m.forEach(function(value, key, map){
+        console.log(`${key} = ${value}`);   值得注意的是 , 如果 要用 ${} 模式的变量 那么必须在 '`'号里 , 而不是 " '  " 里面 
+    })
+
+当对某些参数不感兴趣, 那么javascript 会自动忽略 ,
+m.forEach(function(element){
+        console.log(element);
+    });
+
+```
+
+## 3. 变量 
+### 3.1 变量的类型
+    + javascript 中的变量是无类型的(untype) , 这以为着它可以存放任何的值; 例如 javascript 中, 可以先把一个数字赋值给
+    变量,然后再把一个字符赋值给它.
+        ```
+        i = 10 ;        typeof(i)  返回 'number'
+        i = 'ten';      typeof(i)   返回'string'  
+        ```
+    + javascript 可以快速,自动的将一种类型转换成另外一种类型; 甚至可以 将一个字符串加在数字上; 如下:
+    这种特性也让我产生了怀疑, 如果字符串是 '数字' 的形式的话会出现什么样子的结果,于是试验了一下,
+        ```
+        var i =10;
+        var j = '20'; 
+        j+i = '2010' ;
+        i+j = '1020';
+        这个时候想到 Number 对象和 String 对象的相加结果
+
+        a = new Number()
+        b = new String()
+        typeof(a+b) ;    返回的结果是 'string'
+    ``` 
+    + 字符串和数字相加, 结果是字符串 ;此时又想到如果 数组 和 字符串相加是什么结果?  数组加上数字什么结果? 继续试验;
+        ```
+        var a = [1,2,3,4]
+        var b ='string'
+        typeof(a+b)  ;  返回结果是 'string' !
+        a+b  ;  返回结果'1,2,3,4string'
+        var c = 102
+        a+c  '1,2,3,4102'
+
+        var a = {name:1,age:2}
+        a+c ;  返回的是 '[object object]102'
+        (a+c).length   返回的是18 
+        ```
+    + **结论** 不论是数组, 数字, 还是字符串, 相加之前全部先转换成字符串, 然后在进行相加;
+### 3.2 变量的声明
+    + javascript 使用一个变量前必须先声明! 变量的生命是使用关键字var 声明的, 如下:
+        ```
+        var i;
+        var sum;
+        var i,sum;
+        var message = 'message';
+        var i =0,i=0,k=0;
+        ```
+    + 变量的生命是永久性的, 也就是说如果用delete运算符来删除这些变量的话, 会引发错误!
+        `delete a`   返回 false
+#### 3.2.1 重复的声明和遗漏的声明
+    + 重复声明合法
+    + 如果没有用var 声明变量, 那么这个变量将成为全局变量, 不仅在函数体内, 在函数体外也将声明
+        ```
+        var a = function(){
+            for(i =1;i<10;i++){
+            }
+        };
+        a();
+        console.log(i+1);  返回的 11
+        ```
+### 3.3 变量的作用域
+    + 局部变量的优先级高于全剧变量, 如果两个变量名字相同, 那么局部变量会有效的隐藏全局变量!
+        ```
+        var scope = 'global';
+        function checkscope(){
+            var scope = 'local';
+            console.log(scope);
+            }
+        checkscope();    输出 'local'
+        ```
+#### 3.3.1 没有级块的作用域
+    + 函数中定义的所有变量,无论在哪里声明,在哪里都是有定义的!
+        ```
+        var scope = 'global';
+        function checkscopt(){
+            alert(scope);
+            var scope = 'local';
+            alert(scope);
+        }
+        返回 undfinded local
+        虽然 第一次 alert 的时候并没有顶 scope 是多少, 但是只要在下面定义了, 在整个函数中 全局变量 scope 就处于隐藏状态!
+
+        上面的函数相当于如下:
+        function checkscopt(){
+            var scope;
+            alert(scope);
+            var scope = 'local';
+            alert(scope);
+            }
+        ```
+#### 3.3.2 未定义变量和为赋值变量 
+    + 相关内容比较简单
+    
+### 3.4 基本类型和引用类型
+    + 数值,布尔,null,和未定义值属于基本类型
+    + 对象,数组和函数属于引用类型
+    应该怎么理解上面这段话的意思?
+    + 基本类型在内从中有固定的大小!
+    + 引用类型则不一样, 对象可以具有任意的长度, 数组来说也是, 同样函数也可以包含任意数量的javascript代码;因此不能将
+    它们存放在固定的内存中;相反,变量储存的是对这个值得引用, 通常储存的是指针,或者内存地址.
+    ```
+    var a = 4;
+    var b = a;
+    a = 3;
+    alert(b) ; 返回的是4 
+    
+    但是如果换成数组那么就会如下
+    var a = [1,2,3,4]
+    var b = a ;
+    a[0] = 99;
+    alert(b) ;   [99,2,3,4]
+    ```
+    **说明** 第二个得时候, b = a 的时候并不是将 整个本身数组赋值给b , b拿到的只是数组得一个引用.. 在执行 b = a 的时候 数组还是
+    只有一个, 只是有了两个对他的引用!
+    + 最后有一个有意思的东西, 就是string ,  这个在后面讨论!
+### 3.5 无用储存单元的收集
+    
+### 3.6 作为属性的变量
+    + 变量和 对象的属性 到底有没有却别?  比如 var i  和 o.i 是否有什么区别
+    答案是没有! 
+
+### 3.6.1 全局对象
+    + 当javascript 的解释器开始运行的时候, 它首先要创建一个全局对象(global object) , 而这个全局对象的属性就是javascript 的全局变量!
+    因此,创建一个全局变量的时候, 相当于就是定义那个全局对象的属性!
+    + 此外 javascript 解释器还会用用预定义的值和函数来初始化全局对象的许多属性.例如, 属性Infinity, parseInt 和 Math 分别引用了数值
+    Infinity,预定义的函数parseInt() 和预定义对象Math.
+    + 那么局部变量是什么呢? 他们也是一个对象的属性, 这个对象被称为调用对象(call object). 在执行一个函数的时候,函数的参数和局部变量
+    都是作为调用对象的属性而储存的. 
+    **结论** 因此,全局变量储存在一个  -->全局对象上面<-- 而 函数的参数和局部变量存储在 调用对象 属性中储存.
+
+
+    
+
+## 函数
+### 函数的定义和调用
+    + 定义函数: 在javascript 中,定义函数的方式如下:
+    ```
+    function abs(x){
+            if();
+    }
+    ```
+    **由于javascript的函数也是一个对象, 上述定义的abc() 函数实际上是一个函数对象, 函数名 abs 可以视为指向该函数的变量 因此,第二种定义方式
+    如下**
+    ```
+    var abs = function(x){
+        
+    };
+    ```
+
+    变量abs 指向一个function() 函数对象; 注意咬在function 最后 要加一个 ';' , 表示赋值结束
+
+    + arguments: javascript 赠送的关键字, 它只在函数内部起作用, 并且永远指向函数调用者传入的所有参数, arguments 类似 Array ,但他不是一个Araay:
+    ```
+    function foo(x){
+        alert(x);
+        for(var i =0; i<arguments.length; i++){
+            alert(arguments[i])
+        }
+    }
+    ```
+
+
+
 
 
 
