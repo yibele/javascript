@@ -59,8 +59,7 @@
     var a = 'xiaoming' ; var age = 20;  var message = `hellow , ${name} , you are ${age} now`!  数组头部插入若干元素，  shift 删除第一个元素并返回
 
 + 操作字符串
-    字符串常见的操作如下:
-    var s = "hello word"; s.length; //13 
+    字符串常见的操作如下: var s = "hello word"; s.length; //13 
     要获取字符串制定位置的字符， 使用下表操作:
     var s = 'hello word'
     s[0] ; //'h'
@@ -390,33 +389,109 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 都是作为调用对象的属性而储存的. 
 **结论** 因此,全局变量储存在一个  -->全局对象上面<-- 而 函数的参数和局部变量存储在 调用对象 属性中储存.
 
-## 函数
-### 函数的定义和调用
-    + 定义函数: 在javascript 中,定义函数的方式如下:
+## 4 函数
+### 4.1 函数的定义和调用
++   定义函数: 在javascript 中,定义函数的方式如下:
     ```
     function abs(x){
             if();
     }
     ```
-    **由于javascript的函数也是一个对象, 上述定义的abc() 函数实际上是一个函数对象, 函数名 abs 可以视为指向该函数的变量 因此,第二种定义方式
-    如下**
+**由于javascript的函数也是一个对象, 上述定义的abc() 函数实际上是一个函数对象, 函数名 abs 可以视为指向该函数的变量 因此,第二种定义方式
+如下**
     ```
     var abs = function(x){
         
     };
     ```
 
-    变量abs 指向一个function() 函数对象; 注意咬在function 最后 要加一个 ';' , 表示赋值结束
++   变量abs 指向一个function() 函数对象; 注意咬在function 最后 要加一个 ';' , 表示赋值结束
++   调用函数时候使用运算符() 调用; 里面的参数只有在执行函数的时候才会被定义,一旦函数返回,他们就不存在了;
++   函数print() 不包含return语句,因此它返回的undifined
 
-    + arguments: javascript 赠送的关键字, 它只在函数内部起作用, 并且永远指向函数调用者传入的所有参数, arguments 类似 Array ,但他不是一个Araay:
+#### 4.1.2 Function() 构造函数
++   除了function语句的定义,还有一种构造方喝new运算符动态的定义函数:
+    `var f = new Function("x","y","return x*y");`
+这行代码跟如下一样:
+    `var f = function(x,y) {return x*y};`
++   Function() 最后一个参数是函数主体,其中可以包含任何的javascript语句,
++   传递给Function() 的参数中,没有一个说明它要创建函数的名字, 因此未命名函数有时候较为"匿名函数"
+#### 4.1.3 函数直接量
     ```
-    function foo(x){
-        alert(x);
-        for(var i =0; i<arguments.length; i++){
-            alert(arguments[i])
-        }
+    function x(x){return x*x;} function语句
+    var x = new Function('x','return x*x') //Function()构造函数
+    var f = function(x){return x*x;}  // 函数直接量
+    ```
+
+### 4.2 作为数据的函数
++   javascript 的函数并不只是一种语法,还可以是数据. 意味着 可以将函数赋值给变量,函数的属性,
+数组的元素中,甚至可以传递给函数.
++   要理解这点:考虑如下函数定义:
+    `function square(x){return x*x};`
++   这个定义创建了一个番薯对象,并且把这个对象复制给了square变量.
+    ```
+    按照我的理解, squere拿到的只是函数对象的引用, 可以赋值给其他变量:
+    var a = squere(4) ; 返回 16
+    var b = squeare;  这样 b 也指向了 Function(){return x*x} .
+    var c = b(5)  ; 返回25 
+    ```
++   当然还可以赋给对象的属性中,这样的话我们称之为方法.
+    ```
+    var o = new Object()
+    o.square = new Function('x','return x*x');
+    y = o.square(15)
+    ```
++   函数可以没有函数名,就像我们将函数赋值给数组元素时的那样:
+    ```
+    var a = new Array(3); 
+    a[0] = function(x){return x*x};
+    a[1] = 20;
+    a[2] = a[0](a[1])   a[2]() 调用函数 然后将 a[1] 当为参数传递过去;
+    ```
++   一下是一个详细的例子:
+    ```
+    function add(x,y){ return x+y};
+    function subtract(x,y) { return x-y };
+    function multiply(x,y) { return x*y };
+    function divide9(x,y) { return x/y };
+
+    下面的函数是将某一个函数作为参数
+    它的另外两个参数是两个运算数
+
+    function operate(operator, operator1, operator2){
+        return operator(operator1, operator2);
     }
+
+    我们就可以用这个函数运算 (2+3) + (4*5) 
+
+    var i =operate(add,2,3) + operate(multiply,4,5);
+
+    ===============================================
+    下面我们用直接量实现上面这个函数
+
+    var operators = new Object();
+    operators["add"] = function(a,b){return a+b};
+    operators["multiply"] = function(a,b) { return a*b};
+    operators["divide"] = function(a,b){ return a/b};
+
+    将运算符名字传入参数中,其他两个参数传入运算数
+    然后从关联数组中查找function()
+
+    function operate2(op_name,operand1,operand2){
+        if(operators['op_name']==null)
+            {return null}else{
+                return operators['op_name'](operand1,operand2)
+            }
+        }
+
+    这样 我们可以调用这个函数输出 ('hello' + " "+ 'world')
+
+    var j = operate2('add','hellow',operate2('add',' ','world'));
     ```
+
+
+
+
 
 
 
