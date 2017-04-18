@@ -410,12 +410,67 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 +   函数print() 不包含return语句,因此它返回的undifined
 
 #### 4.1.2 Function() 构造函数
-+   除了function语句的定义,还有一种构造方喝new运算符动态的定义函数:
++   javascript 的构造函数是 任意一个普通函数 在创建类的时候 就会被称为构造函数！ 意思就是说 只有函数才能new
++   除了function语句的定义,还有一种构造方喝new运算符动态的定义函数: 
     `var f = new Function("x","y","return x*y");`
 这行代码跟如下一样:
     `var f = function(x,y) {return x*y};`
 +   Function() 最后一个参数是函数主体,其中可以包含任何的javascript语句,
 +   传递给Function() 的参数中,没有一个说明它要创建函数的名字, 因此未命名函数有时候较为"匿名函数"
+
++ **为什么要使用构造函数** 原因有两个： 
++       第一 : 构造函数允许我们动态的建立和编译一个函数，他不会将我们闲置在function语句预编译的函数体中。这样带来的后果就是
+        每次调用一个函数时，FUnction（） 构造函数都要对它进行编译，因此循环体中不想使用构造函数
+        这句话应该怎么理解？
+        ```
+        new 表达式是配合构造函数使用过的， 
+        首先是定义构造函数: 
+        function CO(){
+            var x = 'this is a local varable';
+            this.p = "I\'m in constructed object";
+            this.alertP = function (){
+                alert(this.p);
+            }
+        }
+        var o2 = new CO();
+        ```
++       上面这一行代码的分步骤的意思就是：
+        ```
+        var CO = {}
+        obj.__proto__ = CO.prototype;
+        CO.call(obj);
+        return obj
+        ```
+
+        **说明** ： 
+        第一行：创建一个空对象obj;
+        第二行：将这个空__proto__成员指向构造函数对象的prototype成员对象，最关键的一步；
+        第三行：将构造函数的作用域复制给新的obj对象，因此 CO 的 this 就指向了新的对象obj，
+        第四行：返回新的对象obj
++       现在就可以说明为什么要使用构造函数了：
+        具体看上面函数的第二行： 新创建对象obj.__proto__ 这个属性被赋值给了一个CO 的原型 ，这意味着，构造函数
+        创建的所有对象可以共享相同的原型，意味着构造函数创建的所有对象都继承自一个相同的对象 。
+        ```
+        CO.prototype.x = 'this is prototype';
+
+        var a = new CO();
+        var b = new CO();
+
+        console.log(a.x);   返回 'this is a prototype'
+        console.log(b.x);   返回 'this is a prototype'
+
+        console.log(a.p);   返回 'in construct object' 
+
+        难道说 定义 co.prototype.x 和 在函数内定义 this.x  开始一样的吗
+        留到prototype 的时候在来回答！
+
+
+        ```
+
+
+
+    
+
 #### 4.1.3 函数直接量
     ```
     function x(x){return x*x;} function语句
@@ -488,6 +543,45 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 
     var j = operate2('add','hellow',operate2('add',' ','world'));
     ```
+### 4.3 函数的作用域：调用对象
++   用var语句声明的局部变量创建后作为调用对象的属性，而且函数的形参也可用于对象的属性；
+
++   除了局部变量和形参外，调用对象还定义了一个特殊属性，名为 arguments.  所以说，其实函数里面的arugments是调用对象里的arguments.
+
+### 4.4 函数的实际参数：Arguments对象
++   调用对象中的 arguments 用来引用 Arguments 对象。 它就像一个数组，可以按照数字获取传递给函数的参数值。
+
++   尽管函数的参数是固定的，但调用这个函数时，传递给他的参数数目却可以任意，arguments[]允许完全的存取那些实际参数值;
+        ```
+        加入定义了一个函数f , 传递给他的实际参数x ， 但是如果你用两个实际参数调用这个函数，那么在函数体内通过
+        x 和 arguments[0] 可以去到第一个实际参数，第二个实际参数智能通过 arguments[1] 来获取；
+        此时 arguments.lenght 的值 为2 ；
+
+        function f(x,y,z）{
+            if(arguments.length != 3){
+                    throw new Erro('function f called with 3 arguments');
+            }
+        }
+
+        还可以直接这样子用 ， 比如Math.max（） 方法定义如下：
+
+        function max(){
+            var m;
+            for(var i=0;i<arguments.length,i++){
+                if(arguments[i]> m )
+                    m=arguments[i];
+            }
+            return m;
+        }
+        ```
+#### 4.4.1 属性 callee
++   Arguments对象还定义了callee属性， 用来引用当前的执行函数；
+        ```
+        function (x){
+            if (x<1) return 1;
+            return x * arguments.callee(x-1);
+        }
+        ```
 
 
 
@@ -515,14 +609,6 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 
 
 
-
-
-
     
 
-
-    
-
-
-    
 

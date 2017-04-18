@@ -45,10 +45,48 @@ var b = a;
 b[0] = 99;
 console.log(a);
 */
+/*
+'use strict';
+
+var xiaoming ={
+    name: 'xiaoming',
+    brith: 1991,
+    age: function(){
+        var that = this;
+        function getAgeFromBirth(){
+            var y  = new Date().getFullYear();
+            return y-that.birth;
+            }
+        return getAgeFromBirth();
+    }
+}
+
+age = xiaoming.age();
+console.log(age);
+
+*/
+
+function CO(){
+    this.p = ' in constructed oject';
+    this.alertP = function(){
+        console.log(this.p);
+        }
+
+    this.x = 'this is in the function';
+
+    }
+
+CO.prototype.x = 'this is prototype';
 
 
-var a = {name:1,age:23}
-var b = a;
+var a = new CO();
+var b = new CO();
+
+console.log(a.x);
+console.log(a.p);
+console.log(b.x);
+console.log(a.alertP());
+
 
 
 
