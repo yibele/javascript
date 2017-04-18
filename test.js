@@ -65,6 +65,7 @@ age = xiaoming.age();
 console.log(age);
 
 */
+/*
 
 function CO(){
     this.p = ' in constructed oject';
@@ -88,9 +89,63 @@ console.log(b.x);
 console.log(a.alertP());
 
 
+**/
+/**
+function check(args){
+    var actural = args.length;
+    var expected = arts.callee.length;
+    if(actural != expected){
+        throw new Error("Wrong number");
+    }
+}
 
+function f(x,y,z){
+    check(arguments);
+    return x+y+z;
+}
+*/
 
+/*
 
+function check(args){
+    var actural = args.length;
+    var expected = args.callee.length;
+    console.log('args.length'+ args.length);
+    console.log('this.length'+ args.callee.length);
+}
+
+function f(x,y,z){
+    
+    check(arguments);
+    
+}
+
+f(1,2);
+*/
+/*
+var o = {}
+
+function f(x){
+    console.log(`${x}`)
+}
+
+f.call(o,2);
+*/
+
+ var obj = {
+        name:'yibu',
+        age : 25,
+        sex : 'male'
+    } 
+
+    function f(){
+        console.log(this.name);
+        console.log(this.age);
+        console.log(this.sex);
+    }
+//f();
+
+f.call(obj,null);
 
 
 

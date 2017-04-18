@@ -582,9 +582,204 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
             return x * arguments.callee(x-1);
         }
         ```
+### 4.5 函数的属性和方法
++   函数既然可以当做数值, 并且可以通过Function对象来创建, 那么这就说明函数其实是一个对象;
+
+#### 4.5.1 属性 length
++   函数的length 属性 是一个只读属性,返回的是函数需要的实际参数的数目. 函数在调用的时候可以传递给它
+    任意的参数.Function 对象的length属性确切的说明了一函数声明的参数的个数
+
++   Function.length 可以通过 arguments.callee.length 属性访问到
+        ```
+        function check(args){
+            var actrual = args.length;          args 的长度
+            var excpec = args.callee.length;    要求的参数个数, Function.length
+
+            if(actrual != excpec){
+                throw new Error('wrong expected number');
+            }
+        }
+
+        function f(x,y,z){
+            check(arguments);
+            return x+y+z;
+        }
+        ```
+        现在遇到一个很严重的问题 就是 函数中的this 这个值代表的是什么??? 等到后面第五章我在回来回答这个问题;
+
+#### 4.5.2 属性 prototype
++   每个函数都有一个prototype 属性,它引用的是预定义的原型对象.原型对象在使用new运算符把函数作为构造函
+    使用的时候起作用, 在第五章详细讲解
+
+#### 4.5.3 定义自己的函数属性
++   什么时候需要定义函数的属性?
+        在函数调用过程中,需要一个始终不变的全局变量,使用Function对象的属性比定义一个 全局变量(这样使得命名空间
+        变得混乱) 更加方便!
+        ```
+        创建并初始化
+        因为函数声明在执行代码前处理, 所以在函数声明前不能真正的实现这个赋值
+        unqueInter.conter = 0;
+
+        //下面的函数每次被调用返回的值都不同; 
+        
+        >而且都是根据自己的静态属性跟踪上次返回的值
+
+        function unqueInter(){
+            return unqueInter.conter++;
+        }
+        ```
+        **总结** 其实函数的属性跟一个全局变量没有什么却别,只是在命名空间,和方便使用,更好区分变量的时候用到; 
+        比如上面这个例子中, 如果将 `unqueInter`定义为 `counter`的话 在其他函数调用的时候就会混淆;
+#### 4.5.4 方法 apply() 和 call() 
++   javascript给所有的函数都定义了 这两个方法 ;  apply() 和 call() 第一个参数是要调用的函数的对象,并且在函数体内这个对象是 this ; 
+    如下;
+    ```
+    f.call(o,1,2)
+    相当于
+    o.m = f;        创建一个对象o, 然后在创建一个属性, 引用f
+    o.m(1,2);       执行属性m 
+    delete o.m;     删除o.m 
+    
+
+    下面是另外一个例子
+    
+    var obj = {
+        name:'yibu',
+        age : 25,
+        sex : 'male'
+    } 
+
+    function f(){
+        console.log(this.name);
+        console.log(this.age);
+        console.log(this.sex);
+    }
+    f();
+    返回:
+    undefined
+    undefined
+    undefined
+
+    但是如果通过call调用
+    f.call(obj,null);
+    那么返回的:
+    yibu
+    25
+    male
+    ```
++   apply() 方法跟call() 方法一样,只是传递的是数组.
+
+## 5 对象
+
+### 5.1 对象和属性
+
+#### 5.1.1 对象的创建
++   对象是由运算符 new 创建的 , 这个运算符之后必须是用于初始化对象的构造函数名;
+        ``` 例如我们创建一个空对象
+        var o = new Object(); 
+        ```
++   对象直接量提供了另一种初始化对象的方式,可以把对象的说明直接嵌入到javascript 代码中; 
+        ```
+        var circle = {x:0,y:0; radius:2}
+        var homer = {
+            name: 'Home Simpson',
+            email: 'yibeel@163.com'
+        }
+        ```
+#### 5.1.2 属性的设置和查询
++   使用运算符 '.'  右边是对象的引用(通常是包含了该对象引用的变量) , 右边的十对象的属性; 
++   在创建变量的使用我们需要通过var进行声明,但是定义对象属性的时候我们绝不能这么做
+
+#### 5.1.3 属性的枚举
++   可以通过for/in循环提供的一种遍历; 列出的属性没有特定的顺序, 只能列出用户定义的属性
+        ```
+        function DisplayPropertyName(obj){
+            var name = '';
+            for(name in obj){
+                name += name +'\n';
+            }
+        }
+        ```
+#### 5.1.4 未定义的属性
++   未定义的属性的值为 undefined 
++   通过delete 来删除一个对象的属性; delete 并不是紧紧把对象属性设为Undefined , 是真正的从对象中
+    移除了该属性
+
+### 5.2 构造函数
++   要创建一个定义了带有属性的对象,需要编写一个构造函数在新的对象中创建并初始化这些属性;它是具有两个特性的 javascript函数:
+
+    * 它由new 运算符调用; 
+    * 传递给它的是一个对新创建对象的引用,将该引用作为关键字this的值,而且还要对新创建的对象进行
+    适当的初始化.
+    传递给构造函数的是一个对新的创建的对象的引用, 这个引用在构造函数内可以用 this这个关键字来保存;
+    ```
+    定义构造函数
+
+    function Rectangle(w,h){
+        this.width = w;
+        this.heigth = h;
+    }
+
+    var rect1 = new Rectangle(1,2)
+    var rect2 = new Rectangle(3,4)
+    ```
+
++   构造函数只是初始化this传进来的对象, 并且没有返回值;但是,如果构造函数返回一个对象值,如果这样做,被返回的对象就成了new表达式的值
+    在这种情况下,this值所引用的对象就被抛弃了;
+
+### 5.3 方法
+
++   所谓的方法,其实就是通过对象调用的javascript函数; 如果有一个函数f 一个对象o ,就可以如下创建一个m方法
+    ` o.m = f` 
+    如果要调用那么: `o.m()`
++   方法有一个很重要的属性,在方法的内部,关键字this就变成了调用该法的对象. 
++   关于关键字this,任何一个方法的函数都会到的一个额外的实际参数, 即调用该函数的对象.
++   方法和函数的却别就在于 ==> 方法是用来操作this对象 , 而函数通常是独立的,不需要使用this
+        ```
+        function compute_area(){
+            return this.width * this.heigth;
+        }
+
+        var page = new Rectangle(1,2);
+        page.area = compute_area;
+
+        var a = page.area();  //调用
+        ```
+    上述例子有一个很大的缺陷,就是没有将方法定义的时候, 那么函数就不能执行; 
++   为了弥补这个麻烦, 就运用构造函数来修改一下;
+    ```
+    首先定义一堆方法
+    function Rectangle_area() { return this.width*this.height}
+    function Rectangle_perimeter() { return 2*this.width + 2*this.height}
+    
+    定义一个构造方法,不仅要初始化属性,还要给方法赋值
+
+    function Rectangle(w, h){
+        this.width = w;
+        this.height = h;
+
+        定义对象的方法;
+        this.area = Rectangle_area;
+        this.perimeter = Rectangle_perimeter;
+    }
+
+    var r = Rectangle(2,2)
+    var area = r.Rectangle_area();
+    var perimeter = r.Rectangle_perimeter();
+    ```
++   上述方法有一个缺点, 构造函数Rectangle() 对它所要初始换的对象的7项属性都进行了设置,即使其中5想属性的值都是常量;(属性中只是一个名字
+    所以, 其实5 个都是常量)
++   因此javascript 引入了一种解决该问题的放方法,即它允许一个对象集成圆形对象的属性.
+
+### 5.4 原型对象和继承
 
 
 
+
+
+
+
+    
 
 
 
