@@ -772,7 +772,53 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 +   因此javascript 引入了一种解决该问题的放方法,即它允许一个对象集成圆形对象的属性.
 
 ### 5.4 原型对象和继承
++   上面的例子中我们已经知道， 用构造函数把方法赋值于对象，效率非常的低。这样做可以做到构造函数创建的每个对象都有相同的方法；
 
++   javascript 的所有的对象都继承原型对象的属性。 并且每个对象都肯定有一个原型对象。
+
++   对象的原型是由创建 初始化该对象的构造函数决定。 所以说 相同的构造函数的原型是一样的。 
+
++   javascript 所有的**函数**都有prototype属性，它引用一个对象。 如下代码说明只有一个函数才有prototype 。 
+```
+    function a(){}
+    var b = new a();
+    a.prototype.x = 'a.x'
+    b.x ; 返回 a.x
+    b.prototype.x = 'b.x'  这个时候回报错 
+```    
++   继承是**查询一个属性的时候自动发生**的。所以说 只有当查询的时候， 会看起来像是对象的属性。
+        这就意味着  第一，对象不用拿出内存空间来储存这些属性
+                    第二， 就算在对象被创建后再添加属性到原型中，对象也能集成属性。
+
++   下面引出一个问题，一个原型会被很多的实例继承 ， 那么javascript是怎么处理读写之间的不平衡？如下代码：
+```
+    function a(){
+        this.x = 'in the construct function ';
+    }
+
+    var b = new a();
+    a.prototype.x = 'in the prototype function';
+    console.log(b.x) ;  返回的是 'in the construct function';
+```
+    **结论** : javascript 在查询属性的时候， 首先查询对象中有没有该属性， 之后才会去查询原型中有没有该属性。
+
++   属性的继承只发生在读属性时候， 而在写属性时不会发生。 如果你设置的 o 对象的属性 p 是从 o 的原型中继承
+    而来的， 那么当你 修改 o.p 的属性的时候， 你会在对象 o 中新建一个 属性p，这样当javascript读取o.p 的时候
+    发现o中已经有了 属性p , 这个时候就会屏蔽掉 o的原型当中的属性p；
+
++   这里有一个我一直迷惑的问题：
+```
+    function a(){}
+
+    a.x 和 a.prototype.x 的区别是什么？
+
+    a.x = 'a.x'
+    a.prototype.x = 'a.prototype.x'
+
+    var b = new a()
+    b.x    返回的是a.prototype.x
+```
+    所以说a.x 只是一个函数的属性， 它相当于只是一个变量。 而a.prototype.x 是 a 所创建的里面所有对象的属性。
 
 
 
