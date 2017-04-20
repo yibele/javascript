@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <script language='javascript'>
+            function print_today_date(){
+                var d = new Date();
+                document.write(d.toLocaleString());
+            }
+        </script>
+
+        <form action="" name='loandata' method="post">
+            <table>
+                <tr>
+                    <td colspan="3"><b>Enter Loan Information:</b></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Aount of the loan (any currency):</td>
+                    <td><input type="text" name="principal" size="12" onchange="calculate()" /></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Annual percentage rate of inster:</td>
+                    <td><input type="text" name="instrest" size='12' onchange="caculate();"/></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Repayment period in years;</td>
+                    <td><input type="text" name="payment" onclick="caculate()"/></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <b> paymentInformaiton:</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Your monthly pament will be:</td>
+                    <td><input type="text" name="pament" size="12"/></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Your total payment will be:</td>
+                    <td><input type="text" name="total" size="12"/></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Your total interset payment will be:</td>
+                    <td><input type="text" name="totalinterest" size="12"/></td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>

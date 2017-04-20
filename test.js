@@ -131,6 +131,7 @@ function f(x){
 
 f.call(o,2);
 */
+/*
 
  var obj = {
         name:'yibu',
@@ -146,6 +147,18 @@ f.call(o,2);
 //f();
 
 f.call(obj,null);
+*/
+
+
+var count = 0 ;
+
+var oldParseInt = parseInt;
+
+function window.parseInt(){
+    count+=1;
+    return OldParseInt(null,arugments);
+}
+
 
 
 

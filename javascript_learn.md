@@ -464,6 +464,9 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
         难道说 定义 co.prototype.x 和 在函数内定义 this.x  开始一样的吗
         留到prototype 的时候在来回答！
 
+        回答： this.x 只是对象本很的属性 ，只有对象才可以使用这个x 
+               co.prototype.x 是x的原型的属性， 所有继承 CO 的对象都可以使用这个属性；
+
 
         ```
 
@@ -631,6 +634,21 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
         **总结** 其实函数的属性跟一个全局变量没有什么却别,只是在命名空间,和方便使用,更好区分变量的时候用到; 
         比如上面这个例子中, 如果将 `unqueInter`定义为 `counter`的话 在其他函数调用的时候就会混淆;
 #### 4.5.4 方法 apply() 和 call() 
+
++   通俗的说明就是如下函数;
+
+```
+    function getAge(){
+        return this.age;
+    }
+
+    当这样定义函数的时候，很明显这个是一个方法， 但是直接使用的时候会返回 undifined 。 因为this没有指向任何对象，它
+    就会指向windows。 那么想让this指向一个对象的话，就需要用apply 或者 call 来指定  this 引用的对象；
+
+    getAge.apply(xiaoming,null); 后面的null 是需要输入的参数； 
+```
+
+    当我们直接调用
 +   javascript给所有的函数都定义了 这两个方法 ;  apply() 和 call() 第一个参数是要调用的函数的对象,并且在函数体内这个对象是 this ; 
     如下;
     ```
@@ -776,7 +794,8 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 
 +   javascript 的所有的对象都继承原型对象的属性。 并且每个对象都肯定有一个原型对象。
 
-+   对象的原型是由创建 初始化该对象的构造函数决定。 所以说 相同的构造函数的原型是一样的。 
++   对象的原型是由创建 初始化该对象的构造函数决定。 所以说 相同的构造函数的原型是一样的。==>原型和prototype是不一样的，只有函数才有
+    prototype属性，而对象是没有prototype属性的。 
 
 +   javascript 所有的**函数**都有prototype属性，它引用一个对象。 如下代码说明只有一个函数才有prototype 。 
 ```
@@ -902,38 +921,153 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
         else
             return b.r
     }
-
-
-
-
-
-
-
+```
+#### 5.5.6 例子复数
+```
+    /*
+    *
+    *第一步，创建构造函数
+    */
     
+    function Complex(real, imaginary){
+        this.x = real           定义实数部分
+        this.y = imaginary      定义虚数部分
+    }
 
+    /*第二部，创建实例属性、方法*/
+    下面是得到复数的大小，即从(0.0) 点到复数点的距离；
+    Complex.prototype.magnitude = function(){
+        return Math.sqrt(this.x*this.x + this.y*this.y); 
+    }
 
+    返回复数的相反数
+    Complex.prototype.negative = function(){
+        return new Complex(-this.x,-this.y);
+    }
 
+    将Complex对象转化成一个字符串
+    这是再把Complex对象作用字符串是调用的函数
+    Complex.prototype.toString = function(){
+        return "{" + this.x + "," + this.y + ""
+    }
+    /*第三部定义类方法
+     *常量和其他必须的类属性，作为构造函数自身的属性
+     *类方法无法调用this关键字
+     */
 
+     复数加法
+     Complex.add = function(a,b){
+         return new Complex(a.x+b.x,a.y+b.y);
+     }
 
+     复数减法
+     Complex.subtract = function(a,b){
+         return new Complex(a.x-b.x,a.y-b.y);
+     }
 
+     下面是一些有用的预定义复数
+     它们被定义为类属性，这样他们就可以被用作常量。 实际上他们并不是只读；
+     Complex.zero = new Complex(0,0)
+     Complex.one = new Complex(1,0)
+     Complex.i = new Complex(0,1)
+```
 
+#### 5.5.7 超类和子类
++   类Object是最通用的类， 其他所有的类都是专用化了的版本；或者是Object是所有类的超类
+    所有的类都继承了Object的基本方法；
+
++   原型对象本身是个对象，他是有构造函数Object() 创建的，这意味着原型对象继承了Obejct.prototype
+    属性。
++   假设类Complex 的对象就继承了 Complext.prototype, 后者有继承了Obejct.prototype;在Complex对象中
+    查询某个属性的时时，就先查询对象本身，在查询Complext.prototype,在查询Object.prototype ；如果
+    已经定义了前者， 那么后者将被隐藏；
+
++   假定我们要生成类Complex的一个子类，以便能添加一些新方法。要做到这一点只需将新类的原型对象
+    是Complex的一个实例，这样他就能继承Complex.prototype;
+
+```
+    以下是子类的构造函数
+    function MoreComplex(real, imaginary){
+        this.x = real
+        this.y = imaginary
+    }
+    我们将它的原型对象作为Complex对象；
+    这就意味着新类的实例将继承MoreComplex.prototype
+    后者由Complex.prototype 继承而来
+    Complex.prototype 有从Object.prototype 继承而来
+    MoreComplex.prototype = new Complex(0,0);
+    下面给子类添加一个新方法和新特性
+    MoreComplex.prototype.swap = function(){
+        var tmp = this.x;
+        this.x = this.y;
+        this.y = tmp;
+    }
+```
+
+### 8.6 作为关联数组的对象
++   对象属性可以用两个符号
+```    
+    object.property
+    object["property"]
+```
++   两条语句中间的区别在于， 前者是属性名是标识符，后者的属性名确实字符串。这一点很重要；
+
++   标识符和字符串的区别； 标识符必须被逐字输入，它们不是一种数据类型，因此程序不能对他们进行操作。
+    这句话的意思就是 标识符就跟常量一样。 系统只是去运行或者说解释它 ， 而不能进行操作。
+    但是用[] 存取对象属性时候，属性名是字符串，可以在程序运行的过程中操作并创建他们，例如如下
+    代码:
+```
+    var addr = '';
+    for(i=0;i<4;i++){
+        add += customer["address" + i]+ '\n';
+    }
+```
++   这一段代码读取了customer对象的属性 address0,address1,address2,address3 ， 并且将它们链接起来；
+
++   用数组读取属性的时候，会用在以下情境下：
+    比如当 对象的属性不知，需要由用户输入的时候。
     
+    for (stock in portfolio){
+        var value += get_share_value(stock) * portfolio[stock];
+    }
+```
 
+### 5.7 对象的属性和方法
++   javascript 所有的对象都由类 Object 继承而来。不论什么对象，都支持Object类定义的属性和方法；
+    由于这些方法的特殊性， 使得他们具有特殊的重要性;
 
+#### 5.7.1 constructor 属性
++   每个对象都有constructor 属性， 它引用的是用来初始化该对象的构造函数;
+    例如，如果用构造函数Complex()创建了一个对象o,那么o.constructor 引用的就是Complex;
++   javascript 会为我们定义的每一个构造函数都创建一个原型对象，并将原型对象赋值给构造函数的
+    prototype属性中。原型对象并非空，它有一个constructor属性，用来引用构造函数；
+#### 5.7.2 toString() 方法
++   该函数返回了一个字符串，字符串代表调用他的对象的类和值;当javascript需要将一个对象转换成字符
+    串的时候就会调用这个对象的toString() 方法;
+#### 5.7.3 toLocalString() 方法
++   
 
-        
+#### 5.7.4 valueOf() 方法
++   将对象的能代表明确的原始值得属性返回。 比如Number 或者 Boolen都有明确的值
++   优先级比toString（） 高， 所以如果定义了valueOf（）方法，并且需要调用toString（）方法的时候
+    一定要明确调用toString（）
+#### 5.7.5 hasOwnProperty()方法
++   如果局部定义了一个非继承的属性，属性名是由一个字符串实际参数指定，那么该方法将返回true；否则放回false;
+```
+    var o = new Object()
+    o.hasOwnProperty("undef") ;  返回false;
+    o.hasOwnProperty("toString"); 返回false; toString 是个继承方法
+    Math.hasOwnProperty("cos") ; 返回true
+```
+#### 5.7.6 isPrototypeOf() 方法
++   如果对用对象是实际参数制定的对象的原型对象，该方法返回true；否则返回false；有点像constructor属性；
+```
+    var o = new Object();
+    Object.isPrototypeOf(o);    true ; o.construcotr = Object
+    Object.isPrototypeOf(o) ;   false;
+```
+### 6 使用正则表达式的匹配模式
 
-
-
-
-        
-        
-
-
-            
-
-
-
-    
+### 7 javascript 的更多主题
 
 
