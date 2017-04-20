@@ -820,6 +820,90 @@ Infinity,预定义的函数parseInt() 和预定义对象Math.
 ```
     所以说a.x 只是一个函数的属性， 它相当于只是一个变量。 而a.prototype.x 是 a 所创建的里面所有对象的属性。
 
++   下面这个例子可以很好地说明对象何其原型对象
+
+```
+    用原型对象定义一个类 Circle 类
+
+    function Circle(x,y,z){
+        this.x = x;
+        this.y = y;
+        this.r = z;
+    }
+    
+    构造函数初始化
+    new Circle(0,0,0);
+
+    定义一个常量PI
+    Circle.prototype.PI = 3.14
+
+    定义一个函数用来计算周长;
+    function circle_circumference(){ return 2*this.r*this.PI};
+
+    在Circle中的原型中添加这个方法
+    Circle.prototype.circumference = circle_circumference;
+
+    用匿名函数定义另一个方法;
+    Circle.prototype.area = function(){ return this.PI * this.r * this.r};
+
+    Circle 类已经定义了,
+    var c = new Circle(0,0,1.0)
+    c.circumference() 调用函数,返回周长
+    c.area();  调用函数,返回周长
+
+```
+
+### 5.5 面向对象的javascript 
++   对比java类的成员有四中可能的基本类型: 实例属性, 实例方法, 类属性, 类方法; 现在我们每一个开始作对比
+
+#### 5.5.1 实例属性
++   在Circle类中,每一个对象都有一个属性r;这个r就是实例属性, 例如 有一个对象 c 是Circle类的一个实例, 那么这样
+    引用实例属性:`c.r`
+
++   实例方法和实例属性非常像, 只是他是一个函数;实例方法用关键字this来引用它们要操作的对象
+    或实例.
+#### 5.5.2 实例函数
++   javascript 中,给类定义个实例方法是,把构造函数的原型对象中的一个属性,设置为函数值来实现的.
+    这样,那个构造函数创建的所有对象都会共享一个以集成的对函数的引用;
+
+#### 5.5.3 类属性
++   类属性是与类相关的变量,而不是和类的每个实例相关联的变量; 无论一个类创建多少个实例,每一个
+    类属性都只有一个副本.
++   类属性是全局变量,但是他们与一个类关联在一起
++   定义类的属性通过如下方法:
+```
+    Circle.PI = 3.14
+```
+
+#### 5.5.4 类方法
++   同样类方法是和类关联在一起的方, 而不是类的实例关联.
++   要调用类方法, 必须使用类来调用. 如 `Date.parse()` 
++   由于不能通过特定的对象调用, 所以 里面的关键字this也没有意义了;
+
+#### 5.5.5 例子: 
+```
+    function Circle(radius){
+        this.r = radius;
+    }
+
+    Circle.PI = 3.14;
+
+    >下面的函数计算圆的面积
+    function Circle_area(){return Circle.PI*this.r*this.r}
+
+    >将函数Circle_area赋值给Circle的原型,使他成为一个方法
+    Circle.prototype.area = Circle_area;
+
+    >
+    function Circle_max(a,b){
+
+        if(a.r>b.r)
+            return a.r
+        else
+            return b.r
+    }
+
+
 
 
 
