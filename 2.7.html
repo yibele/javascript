@@ -1,0 +1,61 @@
+
+<!--window 方法实例-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            var x=0, y=0, w=200, h=200;    //窗口位置的大小
+            var dx=5, dy=5               //窗口移动的速度
+            var interval = 10;         //更新的毫秒数
+
+            //创建要移动的窗口
+            //javascript:URL 是一种现实短文档的简单方法
+            //最后参数指定了窗口的大小
+            var win = window.open('javascript:"<h1>BOUNCE<\/h1>"',"","width="+w+",height="+h);
+            //设置窗口的初始位置
+            win.moveTo(x,y);
+            //用setInterval() 方法调用bounce 方法 
+            //保存放回值，一边我们通过它传递clearInterval() 方法停止动画;
+            var intervalID = window.setInterval("bounce()",interval);
+            //每个指定的好买欧水，该函数就会一定dx，dy 个单位。
+            //当窗口移动到边界上，他将弹回
+            function bounce(){
+                if(window.closed){
+                    clearInterval(intervalID);
+                    return;
+                }
+                //如果达到便捷就返回
+                if(x+dx >(window.innerWidth -w) || (x+dx <0)) dx=-dx;
+                //如果达到上边界或下边界
+                if(y+dy > (window.innerHeight -h) || (y+dy < 0)) dy=-dy;
+                //更新窗口的位置
+                x += dx;
+                y += dy;
+                //最后把窗口移动
+                win.moveTo(x,y);
+            }
+            function getArgs(){
+                var args = new Object();
+                var query = location.search.substring(1);
+                var pairs = query.split(',');
+                for(var i=0;i< pairs.length; i++){
+                    var pos = pairs[i].indexOf('=');      //查找 'name=value'
+                    if(pos == -1) continue;
+                    var argname = pairs[i].substring(0,pos);
+                    var argvalue = pairs[i]substring(pos+1);
+                    args[argname] = unescape(value);
+                }
+                return args;
+            }
+
+
+        </script>
+        <input type="button" value="stop" onclick="clearInterval(intervalID); win.close();"/>
+    </body>
+</html>

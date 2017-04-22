@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+
+        <frameset rows='*,75'> <frame src="about:black">
+            <frame src="http://www.baidu.com">
+        </frameset>
+
+
+        <form name='navbar' onsubmit="go_to();return false;">
+            <input type="button" name="" id="" value="back" onclick="back()"/>
+            <input type="button" name="" id="" value="forward" onclick="forward()"/>
+            <input type="text" name="url" id = 'url'/>
+            <input type="button" name="" id="" value="go" onclick="go_to()" />
+            
+        </form>
+
+        <script type="text/javascript" charset="utf-8">
+
+            function go_to(){
+
+                parent.frames[0].location = document.navbar.url.value; 
+
+            };
+
+            function back(){
+
+                document.navbar.url.value = '';
+                parent.frames[0].history.back();
+
+                //然后将表单中的url变成当前的url 
+                setTimeout("document.navbar.url.value = parent.frames[0].location.href;",1000);
+            };
+            
+            function forward(){
+
+                document.navbar.url.value='';
+                parent.frames[0].history.forward();
+
+                setTimeout("document.navbar.url.value = parent.frames[0].location.href;",1000);
+            };
+            
+        </script>
+    </body>
+</html>

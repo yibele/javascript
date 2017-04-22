@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+<form action="" name='everything'>
+<table>
+	<tr>
+		<td>
+			Username:<br>[1] <input type="text" name='username' size='15'>
+		</td>
+		<td>
+			Password:<br>[2] <input type="text" name='password' size='15'>
+		</td>
+		<td rowspan="4">
+			Input Event[3] :<br>
+			<textarea name="textarea" id="" cols="28" rows="20"></textarea>
+		</td>
+		<td rowspan="4" align="center" valign="center">
+			[9] <input type="button" value="Clear" name="clearbutton"><br>
+			[10] <input type="submit" name='submitbutton' value='Submit'><br>
+			[11] <input type="reset" name='resetbutton' value="Reset"><br>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			Filename=: [4] <input type="file" name='file' size="15">
+		</td>
+	</tr>
+	<tr>
+		<td>
+			My Computer Perpherals: <br>
+			[5] <input type="checkbox" name='peripherals' value="modem"> 56K Modem<br>
+			[5] <input type="checkbox" name='peripherals' value="printer">Printer<br>
+			[5] <input type="checkbox" name='peripherals' value="tape">Tape Backup
+		</td>
+		<td>
+			My Web Browser:<br>
+			[6] <input type="radio" name="browser" value='nn'>Netscape<br>
+			[6] <input type="radio" name="browser" value='ie'>Internet Explorer<br>
+			[6] <input type="radio" name="browser" value='other'>Ohter<br>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			My Hobbies: [7]<br>
+			<select name="hobbies" multiple="multiple" size="4">
+				<option value="programming">Hacking Javascript</option>
+				<option value="surfing">Surfing the Web</option>
+				<option value="caffeine">Drinking Coffee</option>
+				<option value="annoying">Annoying my Friends</option>
+			</select>
+		</td>
+		<td align="center" valign='center'>My Favorite Color:<br>
+		<select name="color" id="">
+			<option value="red">Red</option>
+			<option value="blue">blue</option>
+			<option value="violet">violet</option>
+			<option value="green">green</option>
+			<option value="white">white</option>
+			<option value="peach">peach</option>
+		</select>
+		</td>
+	</tr>
+</table>
+</form>
+
+<script>
+
+	function report(element, event){
+		var vlaue = '';
+		var elemname = element.name;
+		if((elemname.type =='select-one') || (elemname.type =='select-multiple')){
+			for(var i=0;i<element.options.length;i++){
+				if(element.options[i].selected){
+					value += element.options[i].value+ ' ';
+				}
+			}
+		}else if(elemname.type == 'textarea'){
+			value = '....';
+		}else{
+			value = element.value;
+		}
+		var msg = elemname +': ' + event + '('+value+')\n';
+		var t = element.form.textarea;
+		t.value = t.value + msg;
+	}
+
+	function addhandlers(f){
+		for(var i=0;i<f.elements.length;i++){
+			var e = f.elements[i];
+			e.onclick = function(){ report(this,"Click")};
+			e.onchange = function (){ report(this,"Change")};
+			e.onfocus = function(){ report(this, "Focus")};
+			e.onblur = function(){ report(this,"Blur")}
+			e.onselect = function(){ report(this,'select')};
+		}
+
+		f.clearbutton.onclick = function(){ this.form.textarea.value=' '; report(this,"Click")};
+		f.submitbutton.onclick =function(){ report(this,'Submit') };
+		f.resetbutton.onclick = function(){ this.form.reset(); report(this,'Reset');return false;}
+	}
+
+	addhandlers(document.everything);
+
+
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <!--<img src="images/sucai1.jpeg" name='help' alt="" />
+        <a href='www.baidu.com' onmouseover="images.help.src='images/sucai2.jpeg'"
+        onmouseout="images.help.src='images/sucai1.jpeg'">change</a>
+        -->
+        <script>
+
+        var aniframes = new Array(5);
+        for(var i=1;i<=5;i++){
+            aniframes[i] = new Image();
+            aniframes[i].src = 'images/'+i+".jpeg";
+        }
+
+        var frame = 0 ;      //帧数计时器，跟踪当前的帧数
+        var timeout_id = null;  //允许我们用clearTimeout()来停止动画
+
+        function animate(){
+            document.animate.src = aniframes[frame].src;
+            frame = (frame+1)%5;     // 更新帧计时器 ； 简单的循环 ， 从1-10 之后再从1-10
+            timeout_id = setTimeout("animate()",3000);
+        }
+        </script>
+
+        <form action="" method="post">
+            <button onclick="if (time_out ==null) animate()">start</button>
+            <input type="button" name="stop" onclick="if(timeout_id) clearTimeout(timeout_id);timeout_id = null"/>
+        </form>
+
+        <img src="images/2.jpeg" name='animate' alt="" />
+
+
+
+    </body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+
+            function toggleButton(document,checked,label,onclick){
+                //第一次加载时候需要做的事情，只需加载一次。做一些图片的初始化，和缓存
+                if(!toggleButton.prototype.over){
+                    toggleButton.prototype.over = _toggleButotn_over;
+                    toggleButton.prototype.out = _toggleButton_out;
+                    toggleButton.prototype.click = _toggleButton_click;
+
+                    //初始化图片
+                    //images作为类属性，而不是全局变量
+                    toggleButton.images = new Array(4);
+                    for (var i=0;i<4;i++){
+                        toggleButton.images[i] = new Image(toggleButton.width,toggleButton.height);
+                        toggleButton.images[i].src = toggleButton.imagenames[i];
+                    }
+                }
+
+                this.document = document;
+                this.checked = checked;
+
+                //鼠标不再顶层!???? 
+                this.highlighted = false;
+
+                this.onclick = onclick;
+                if(typeof this.onclick =='string'){
+                    this.onclick = new Function("status", this.onclick);
+                }
+
+                //document.images[]数组中设置存放该复选框图像的条目
+                var index = document.images.length;
+
+                //下面输出复选框的HTML代码。使用<a> 和 <img>标记;
+                document.write("<a href='ablout:blank' onmouseover="+"'document.images[index]._tb.over();return true;'"+
+                    "onmouseout='document.images[index]._tb.out()'"+"onmouseclick='document.images[index]._tb.click();return false;'");
+                document.write("<img src = '"+toggleButton.imagenames[this.checked+0]+"'width='"+toggleButton.width+"'height='"+toggleButton.height+"' border='0' hspace='0' vspace='0' align='absmiddle'>");
+                if(label) document.write(label);
+                document.write('</a></br>');
+                //我们已经输出了img标记
+                //那么久保存toggleButton 对象中创建的队Image对象的引用
+                this.image = document.images[index];
+
+                //创建一个从Image对象到ToggleButton 对象的链接
+                //通过给Image对象定义_tb属性，实现这一点
+                this.image._tb = this;
+            }
+
+            function _toggleButotn_over(){
+                this.image.src = toggleButton.imagenames[this.checked+2];
+                this.highlighted = true;
+            }
+
+            function _toggleButton_out(){
+                this.image.src = toggleButton.imagenames[this.checked+0];
+                this.highlighted = false; }
+            function _toggleButton_click(){
+                this.checked = !this.checked;
+                this.image.src = toggleButton.imagenames[this.checked+this.highlighted*2];
+                if(this.onclick) this.onclick(this.checked);
+            }
+
+            toggleButton.imagenames = new Array(4);
+            toggleButton.imagenames[0] = "images/1.jpeg";
+            toggleButton.imagenames[1] = "images/2.jpeg";
+            toggleButton.imagenames[2] = "images/3.jpeg";
+            toggleButton.imagenames[3] = "images/4.jpeg";
+            toggleButton.width = toggleButton.height = 25;
+        </script>
+
+        <!-- 以下是如何使用toggleButton 类-->
+
+        Optional extras :<br>
+        <script type="text/javascript">
+            var tb1 = new toggleButton(document,true,"56K Modem");
+            var tb2 = new toggleButton(document,false,"Laser Printer", function(click){alert("printer:"+clicked);});
+            var tb3 = new toggleButton(document,false,"Tape Backup Unit","alert('Tape backeup:'+ state)");
+        </script>
+
+        <!-- 以下是如何从事件处理程序使用toggleButton 对象-->
+
+        <form>
+            <input type="button" name="" value="Report Button Status" onclick="alert(tb1.checked+'\n'+tb2.checked+'\n'+tb3.checked)">
+            <input type="button" name="" value="reset Buttons" onclick="if (tb1.checked) {tb1.click()};
+            if (tb2.checked) {tb2.click()};if (tb3.checked) {tb3.click()}">
+        </form>
+
+
+
+        
+
+
+    </body>
+</html>
