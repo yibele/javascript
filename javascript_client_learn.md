@@ -794,6 +794,293 @@ document.address.browser[2]
     * name HTML的name性质指定的只读字符串
     * value 表单元素的值
 
+## 5  脚本化cookie
+### 5.1 Cookie 概览
++   cookie 是一个 name = value 键值对，每个cookie 都有四个可选的性质，分别控制
+* 生存期 expires, 指定了cookie的生存期 （cookie) 是暂时存在的，关闭浏览器会消失；date 格式为 Date.toGMTString()
+* 可见性 path, 默认情况下cookie 只在所在页面的文件夹中的页面内有效； 比如  www.baidu.com/cate/index.html  那么在 www.baidu.com/cate/about.html 之也可以生效
+但是在 www.baidu.com/index.html 中无法生效。 可以通过修改path 来实现cookie 的共享文件夹。 如 path ='/' 是在所有的文件都生效， path ='/cate' 的话，就可以在
+/cate  下也会生效； 但是如果是在两个服务器上的分布式网站呢？  比如 about.baidu.com    index.baidu.com  这两个服务器的时候 就会出现domain性质； 例如：
+`path ='/' 并且把 domain ='.baidu.com'` 这样就可以了
+* 安全性 secure true 的时候 会通过https 来发送cookie;
+
+### 5.2 cookie的储存
++   存储cookie `location.cookie = "vaersion ="+ escape(document.lastModified);` 因为cookie值不能含有分好
+，逗号或者空白符，因此需要escape()把值存入cookie之前对他进行编码； 并在读取时候 得使用 `unescape()`函数；
++   每个服务器保存的cookie数不能超过20个,为避免超过这个限制，为每个想保存的状态变量都设置一个单独的cookie不是一个
+好主意，将多个相关的状态变量存储到一个cookie中；
+```
+
+### 5.3 cookie的读取
+var allcookie = document.cookie;
+var pos = allcookie.indexOf("version=");
+//pos 返回的是version= 第一个出现的位置；
+
+//如果找到了具有改名字的cookie,那么提取并使用它的值
+if(pos != -1){
+    var satart = pos + 8;          //version= 正好是8个字符，pos的话那么就找好是=号之后的
+    var end = allcookie.indexOf(';',start);
+    if(end ==-1) end = allcookie.length;
+    var value = allcookie.substring(start,end);
+    varlue = unescape(value);
+
+    if(value != document.lastModified){
+        alert("This document has changed since you were last here");
+    }
+}
+```
+当然，当对cookie 属性进行读操作属性的时候，得到的字符串不包含任何有关各种cookie属性的信息。但cookie属性只允许
+设置这些属性，但却不允许你读取它们的值；
+
+### 5.4 cookie 示例
++   下面这个例子是我们定义一个cookie对象，就为这个cookie对象制定了Document对象和一个名字，创建了这个
+cookie 对象后，就可以设置这个对象的任意字符串属性，这些属性的值就储存在cookie的值中. 
++   说明： store()方法可以遍历cookie对象的所有由用户定义的属性，并将这些属性的名字和值连接到一个字符串中;
+
+
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            function Cookie(document , name, hours, path, domain, secure){
+                // 该对象所有的预定义属性都有$开头，
+                // 这是为了与存储在cookie中的属性区分开
+                this.$document = document;
+                this.$name = name;
+                if(hours){
+                    this.$expiration = new Date((new Date()).getTime() + hours*3600000);
+                }else{
+                    this.$expiration = null;
+                }
+                if(path) this.$path = path; else this.$path = null;
+                if(domain) this.$domain = domain; else this.$domain =null;
+                if(secure) this.$secure = true; else this.$secure = false;
+            }
+
+            Cookie.prototype.store = function(){
+                //首先遍历cookie对象的属性，并且将cookie值连接起来;
+                //由于cookie将等号和分号作为分隔符；
+                //所有我们使用冒号和&分隔储存在单个cookie之中的状态变量
+                //注意，我们队每个状态变量进行了转移，以防它还有标点符号或其他非法符号
+                var cookieval = '';
+                for(var prop in this){
+                    //忽略所有名字以$ 开头的属性和方法
+                    if((prop.charAt(0) == '$') || ((typeof this[prop]) =='function'))
+                        continue;
+                    if(cookieval !="") cookieval += '&';
+                    cookieval +=prop + ':' + escape(this[prop]);
+                }
+
+                var cookie = this.$name + '=' + cookieval;
+
+                if(this.$expiration)
+                    cookie +='; expires = '+this.$expiration.toGMTString();
+                if(this.$path) cookie += ';path=' +this.$path;
+                if(this.domain) cookie +=';domain=' +this.$domain;
+                if(this.secure) cookie +='; secure';
+
+                this.$document.cookie = cookie;
+            }
+
+            Cookie.prototype.load = function() {
+                //首先得到所有的cookie
+                var allcookies = this.$document.cookie;
+                if(allcookies == '') return false;
+
+                //下面从该列表中提取一命名的cookie
+                var start = allcookies.indexOf(this.$name +'=');
+                if(start == -1){
+                    return false;
+                }
+
+                start += this.$name.length +1 ;    //跳过名字和等号； 
+                var end = allcookies.indexOf(';',start);
+                if(end == -1){
+                    end = allcookies.length;
+                }
+                var cookieval = allcookies.substring(end,start);
+                //既然我们已经提取出了已命名的cookie的值
+                //就可以把它分割存储到状态变脸和值中
+                //使用split() 方法解析所有的数据
+                var a = cookieval.split('&');
+                for(var i=0;i<a.length;i++){
+                    a[i] =a[i].split(':');
+                }
+
+                //既然我们已经解析了cookie值
+                //就可以设置cookie对象中的状态变脸的名字和值
+                //注意我们队属性值调用了unscape()方法
+                for(var i=0;i<a.length;i++){
+                    this[a[i][0]] = unescape(a[i][1]);
+                }
+                return true;
+            }
+
+                //该函数的 remove() 方法
+            Cookie.prototype.remove = function (){
+                var cookie; 
+                cookie = this.$name+'=';
+                if(this.$path) cookie +=';path='+ this.$path;
+                if(this.$domain) cookie+='; domain ='+this.$domain;
+                cookie +='; expires = Fri, 02-Jan-1970 00:00:00 GMT';
+                this.$document.cookie = cookie;
+            }
+
+            var visitordata = new Cookie(document, "name_color_count_state" ,240);
+            if(!visitordata.load() || !visitordata.name || !visitordata.color){
+                visitordata.name = prompt("what is your name:","");
+                visitordata.color = prompt("What is your favorite color:","");
+            }
+            if(visitordata.visits ==null) visitordata.visitordata=0;
+            visitordata.visits ++;
+
+            visitordata.store();
+
+            document.write('<font size="7" color="'+visitordata.color+'">'+'Welcome,' + visitordata.name +'!'+'</font>' +'<p> You have visited' + visitordata.visits +'times.');
+        </script>
+        <input type="button" value="Forget My name" onclick="visitordata.remove()" />
+    </body>
+</html>
+```
+
+## 6 文档对象模型
++   各大浏览器厂商本来已经自己有一套自己的方法，所以w3c组织就发布了DOM来整合这一系列的方法到一起。
+这个就是DOM为什么出现；DOM提供了各种各样的借口，可以方便的实现在上面已经说到的功能；
+
+### 6.1 DOM概览
++   DOM是将一个HTML页面用一个树形表示。HTML中有个Node对象树。Node借口为遍历和操作树定义了属性和方法。
++   遍历对象 Node对象的childNodes 属性将返回子节点的列表。`firstChild,lastChild,nextSibling,previousSibling 和
+parentNode`属性提供遍历树的方法.
++   修改添加 上面指的是遍历的方法，appendChild(),removeChild(),replaceChild和 insertBefore()可以方便的
+让你在文档树中添加删除节点。
+
+### 6.1.1 节点的类型
++   每个Node对象都有nodeType 属性，这些属性制定节点的类型。 
+    * Element       Node.ELEMENT_NODE
+    * Text          Node.Text_NODE
+    * Document      Node.DOCUMENT_NODE
+    * Comment       Node.COMMENT_NODE
+    * DocumentFragment      Node.DOCUMENT_FRAGMENT_NODE
+    * Attr          Node.ATTRIBUTE_NODE
+
++   document.getElementByTagName:
+`document.getElementByTagName("body")[0] 获得body元素`
+getElmentByTagName() 返回一个数组，包含所有的HTML元素的列表，如获取文档中所有的表：
+` var tables = docuemnt.getElementByTagName('table');  alert("this html have" + tables.length +'tables;');`
++   有事我们想操作制定的一个表，那么就可以用 `document.getElementByTagName('table')[3] . 当这样并不是最好的，
+最好的方法是在table中添加一个属性为id；
+`<table id='specialTable'>` 然后通过`getElmentById("specialTable")`; 来获得
+
++   以下是一个例子 ， 将body中的元素翻转；
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            function reverse(f){
+                var kids = f.childNodes;
+                var numbers = kids.length;
+                for(var i = numbers-1;i>=0;i--){
+                    var c = f.removeChild(kids[i]);
+                    f.appendChild(c);
+                }
+            }
+        </script>
+        <p>paragraph #1</p>
+        <p>paragraph #2</p>
+        <p>paragraph #3</p>
+        <button onclick='reverse(document.body)'>reverse</button>
+    </body>
+</html>
+```
++   解释： `var kids = document.body` ， 拿到body内的所有子节点。并且记录`numbers = kids.length`; 
+然后删除元素 `var c = f.removeChild(kids[i]);` 然后再将元素插入 `f.appendChild(c)` ;
++   上面的函数中可以将 `var c = f.removeChild(kids[i]); ` 删除， 因为在应用 appendChild() 函数的时候，
+如果节点已存在，那么就会先删除， 再插入；
++   为了更好的理解上面这个例子，我们将上面的例子扩展一下；现在要做到不只是颠倒子节点元素，还要做到text元素内的
+内容的颠倒。
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+    <script type="text/javascript">
+        function reverse(f){
+            /*下面是我自己写的版本
+            var kids = f.childNodes;
+            for (var i = kids.length - 1; i >= 0; i--) {
+                if(kids[i].type ==3){
+                    var reversed = '';
+                    kdata = kids[i].data;
+                    for(var j=data.length-1;j >=0;j--){
+                        reversed +=data.charAt(j);
+                    }
+                    kids[i].data = reversed;
+                }else{
+
+                }
+                */
+                //但是这种方法只能做到将text的内容倒转，如果继续实现将childnodes倒转的话，还要做很多的
+                //条件判断。 所以最简单的方法是用递归
+                if(f.nodeType == 3){
+                    var fdata = f.data;
+                    var reversed = '';
+                    for(var i=fdata.length -1 ; i>=0;i--){
+                        reversed += fdata.charAt(i);
+                    }
+                    f.data = reversed;
+                }else{
+                    var kids = f.childNodes;
+                    var numbers = kids.length;
+                    for(var i = numbers-1;i>=0;i--){
+                        reverse(kids[i]);
+                        f.appendChild(f.removeChild(kids[i]));
+                    }
+                }
+
+            }
+        }
+    </script>
+
+    <p>paragraph #1</p>
+    <p>paragraph #2</p>
+    <p>paragraph #3</p>
+    <button onclick='reverse(document.body)'>reverse</button>
+
+</body>
+</html>
+```
++   还有一种方法是，遍历整个body子节点，找到text节点的时候，先用 `document.createTextNode()`方法创建一个
+`Text`节点，然后再用`document.replaceChild()`方法替换原始的Text节点.(首先找到想要替换的节点的父节点，再使用replaceChild());
+
++   `setAttribute()` 方法对元素性质进行修改;
+```
+var headline = document.getElementById('headline')
+headline.setAttribute('align','center');
+```
+当然可以直接使用标准性质的javascript属性;
+`headline.align = 'center';`
+
++   以下还有一个简单的例子，使用`createElement()`函数创建一个新节点，然后使用`appendChild()`插入到文档中；
+并通过 innerHTML 属性修改里面的内容以及相关操作;
+```
+
+
+
 
 
 

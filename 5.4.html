@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            function Cookie(document , name, hours, path, domain, secure){
+                // 该对象所有的预定义属性都有$开头，
+                // 这是为了与存储在cookie中的属性区分开
+                this.$document = document;
+                this.$name = name;
+                if(hours){
+                    this.$expiration = new Date((new Date()).getTime() + hours*3600000);
+                }else{
+                    this.$expiration = null;
+                }
+                if(path) this.$path = path; else this.$path = null;
+                if(domain) this.$domain = domain; else this.$domain =null;
+                if(secure) this.$secure = true; else this.$secure = false;
+            }
+
+            Cookie.prototype.store = function(){
+                //首先遍历cookie对象的属性，并且将cookie值连接起来;
+                //由于cookie将等号和分号作为分隔符；
+                //所有我们使用冒号和&分隔储存在单个cookie之中的状态变量
+                //注意，我们队每个状态变量进行了转移，以防它还有标点符号或其他非法符号
+                var cookieval = '';
+                for(var prop in this){
+                    //忽略所有名字以$ 开头的属性和方法
+                    if((prop.charAt(0) == '$') || ((typeof this[prop]) =='function'))
+                        continue;
+                    if(cookieval !="") cookieval += '&';
+                    cookieval +=prop + ':' + escape(this[prop]);
+                }
+
+                var cookie = this.$name + '=' + cookieval;
+
+                if(this.$expiration)
+                    cookie +='; expires = '+this.$expiration.toGMTString();
+                if(this.$path) cookie += ';path=' +this.$path;
+                if(this.domain) cookie +=';domain=' +this.$domain;
+                if(this.secure) cookie +='; secure';
+
+                this.$document.cookie = cookie;
+            }
+
+            Cookie.prototype.load = function() {
+                //首先得到所有的cookie
+                var allcookies = this.$document.cookie;
+                if(allcookies == '') return false;
+
+                //下面从该列表中提取一命名的cookie
+                var start = allcookies.indexOf(this.$name +'=');
+                if(start == -1){
+                    return false;
+                }
+
+                start += this.$name.length +1 ;    //跳过名字和等号； 
+                var end = allcookies.indexOf(';',start);
+                if(end == -1){
+                    end = allcookies.length;
+                }
+                var cookieval = allcookies.substring(end,start);
+                //既然我们已经提取出了已命名的cookie的值
+                //就可以把它分割存储到状态变脸和值中
+                //使用split() 方法解析所有的数据
+                var a = cookieval.split('&');
+                for(var i=0;i<a.length;i++){
+                    a[i] =a[i].split(':');
+                }
+
+                //既然我们已经解析了cookie值
+                //就可以设置cookie对象中的状态变脸的名字和值
+                //注意我们队属性值调用了unscape()方法
+                for(var i=0;i<a.length;i++){
+                    this[a[i][0]] = unescape(a[i][1]);
+                }
+                return true;
+            }
+
+                //该函数的 remove() 方法
+            Cookie.prototype.remove = function (){
+                var cookie; 
+                cookie = this.$name+'=';
+                if(this.$path) cookie +=';path='+ this.$path;
+                if(this.$domain) cookie+='; domain ='+this.$domain;
+                cookie +='; expires = Fri, 02-Jan-1970 00:00:00 GMT';
+                this.$document.cookie = cookie;
+            }
+
+            var visitordata = new Cookie(document, "name_color_count_state" ,240);
+            if(!visitordata.load() || !visitordata.name || !visitordata.color){
+                visitordata.name = prompt("what is your name:","");
+                visitordata.color = prompt("What is your favorite color:","");
+            }
+            if(visitordata.visits ==null) visitordata.visitordata=0;
+            visitordata.visits ++;
+
+            visitordata.store();
+
+            document.write('<font size="7" color="'+visitordata.color+'">'+'Welcome,' + visitordata.name +'!'+'</font>' +'<p> You have visited' + visitordata.visits +'times.');
+        </script>
+        <input type="button" value="Forget My name" onclick="visitordata.remove()" />
+    </body>
+</html>

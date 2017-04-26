@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+	function maketoc(replace){
+		//创建一个div ，toc的根
+		var toc = document.createElement('div');
+		//设置toc的样式
+		toc.style.backgroundColor = 'white';
+		toc.style.fontFamily = 'sans-serif';
+
+		//用锚元素座位toc的开端一边我们以后能回来
+		var anchor = document.createElement('a');
+		anchor.setAttribute('name', 'TOC');
+		toc.appendChild(anchor);
+
+		//使锚元素的主体为TOC的标题
+		anchor.document.createTextNode('Table of Contents');
+
+		//创建一个<table>元素，用来存放TOC，病加入它
+		var table = document.createElement('table');
+		toc.appendChild(table);
+
+		//创建一个<tbody>元素，用来存放TOC的行：
+		var tbody = document.createElement('tbody');
+		table.appendChild(tbody);
+
+		//初始化一个数组，以跟踪段号;
+		var sectionNumbers = [0,0,0,0,0,0];
+
+		//递归遍历文档的主题，查找段
+		//段标记为 <h1>,<h2> ...
+		//通过给标题添加行，用这些标记创建TOC
+		//这里我们使用一个函数，等会儿将创建这个函数。
+		addSections(document.body,tbody,sectionNumbers);
+
+		//最后通过用带有TOC字数的替换参数替换制定的节点，把TOC插入文档
+		replace.parentNode.replaceChild(toc, replace);
+
+		//下面是方法
+		//该方法将递归的遍历根节点为n的树
+		//查找标记为<h1>到<h6>，通过给TOC参数制定的HTML表添加行
+		//变可以用这些标记的内容创建表的内容。它使用sectionNumbers 数组来跟踪当前的段号
+		//maketoc() 内部定义，外部不可见
+		//maketoc() 室友该javascript模块输出的唯一函数
+
+		function addSections(n, toc, sectionNumbers){
+			//遍历所有的n的子节点
+			for(var m =n.firstChild; m!=null; m=m.nextSibling){
+				if((m.nodeType ==1) && (m.tagname.length==2)&&(m.tagName.charAt(0) == "H")){
+					//检查它是什么级别的标题
+					var level = parseInt(m.tagName.charAt(1));
+					if(!isNAN(level) && (level>=1) &&(level<=6)){
+						//为改标题增加段号;
+						sectionNumbers[level-1]++;
+						//把所有低级标题的段号重置为0；
+						for(var i =level;i<6;i++){
+							sectionNumbers[i] =0;
+						}
+						//下面把所有的标题段号组好起来
+						//生成如'2.3.1' 的段号
+
+						var sectionNumber = '';
+						for(var i=0;i<level;i++){
+							sectionNumber +=sectionNumbers[i];
+							if(i<level-1) sectionNumber +='.';
+						}
+
+						//创建一个锚元素，标记该段的开端
+						//他讲成为我们添加到TOC的链接的目标
+						var anchor = document.createElement('a');
+						anchor.setAttribute('name', 'SECT'+sectionNumber);
+
+						//创建返回TOC的链接，使她成为锚元素的子节点；
+						var backlink = document.createElement('a');
+						backlink.setAttribute('href', '#TOC');
+						backlink.appendChild(document.createTextNode('Contents'));
+						anchor.appendChild(backlink);
+
+						//把锚元素插入文档中的段标题之前
+						n.insertBefore(anchor, m);	
+
+
+						//下面创建到该短的链接，一下代码会把它加入TOC.
+						var link = document.createElement('a');
+						link.setAttribute('href', '#SECT'+sectionNumber);
+						//用下面定义的函数获取标题文本
+						var sectionTitle = getTextContent(m); //这个函数在后面定义
+						link.appendChild(document.createTextNode(sectionTitle));
+
+						//为TOC创建新行
+						var row = document.createElement('tr');
+
+						var col1 = document.createElement('td');
+						var col2 = document.createElement('td');
+
+						col1.setAttribute('align', 'right');
+						col1.appendChild(document.createTextNode(sectionNumber));
+
+						col2.appendChild(link);
+
+						row.appendChild(col1);
+						row.appendChild(col2);
+						toc.appendChild(row);
+
+						//修改标题自身元素，添加该段好座位标题的一部分
+						m.insertBefore(document.createTextNode(sectionNumber+':'),m.firstChild);
+					}
+				}else{
+					addSections(m,toc,sectionNumbers);
+				}
+			}
+		}
+		function getTextContent(n){
+			var s ='';
+			var children = n.childNodes;
+			for(var i=0;i<children.length;i++){
+				var kids = children[i];
+				if(kids.type == 3){
+					s +=kids.data;
+				}else{
+					s +=getTextContent(kids);
+				}
+			}
+			return s;
+		}
+	}
+
+	
+</script>
+
+
+<h1>1:Chapter 1.Introduction to javascript</h1>
+<h2>1.1 Chapter 1.1 Intrucducntion to javasetc 1.1</h2>
+
+
+</body>
+</html>

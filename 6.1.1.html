@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+	<script type="text/javascript">
+		function reverse(f){
+			/*下面是我自己写的版本
+			var kids = f.childNodes;
+			for (var i = kids.length - 1; i >= 0; i--) {
+				if(kids[i].type ==3){
+					var reversed = '';
+					kdata = kids[i].data;
+					for(var j=data.length-1;j >=0;j--){
+						reversed +=data.charAt(j);
+					}
+					kids[i].data = reversed;
+				}else{
+
+				}
+				*/
+				//但是这种方法只能做到将text的内容倒转，如果继续实现将childnodes倒转的话，还要做很多的
+				//条件判断。 所以最简单的方法是用递归
+				if(f.nodeType == 3){
+					var fdata = f.data;
+					var reversed = '';
+					for(var i=fdata.length -1 ; i>=0;i--){
+						reversed += fdata.charAt(i);
+					}
+					f.data = reversed;
+				}else{
+					var kids = f.childNodes;
+					var numbers = kids.length;
+					for(var i = numbers-1;i>=0;i--){
+						reverse(kids[i]);
+						f.appendChild(f.removeChild(kids[i]));
+					}
+				}
+
+			}
+		}
+	</script>
+
+	<p>paragraph #1</p>
+	<p>paragraph #2</p>
+	<p>paragraph #3</p>
+	<button onclick='reverse(document.body)'>reverse</button>
+
+</body>
+</html>

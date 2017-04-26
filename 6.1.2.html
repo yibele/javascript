@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+	function debug(mes){
+		//第一次调用的时候创建 <div> 来现实消息
+		//注意为了避免使用其他全局变量，我们用该函数自己的属性来定义box
+		if(!debug.box){
+			debug.box = document.createElement('div');    //创建的Element是在document级别上创建
+			debug.box.setAttribute('style', 'background-color:white;'+'font-family:monospace'+'border = solid black 3px;'+'padding:10px;')
+			document.body.append(debug.box);       //添加的时候要在具体的添加的级别上，比如我们现在要添加到body中 ，那么就得在body上添加
+		}
+		//给div插入具体的内容
+		debug.box.innerHTML = '<h1 style="text-align:center">bugging Output</h1>'
+		// innerHTMl 是一个属性， 而不是函数 如下用法是错误的 
+		//debug.box.innerHTML('<h1 style="text-align:center"ebugging Output</h1>');
+		//现在我们把我们的调试信息放到 debug.box 所引用的div中去
+		//首先我们创建一个p 标签
+		var p = document.createElement('p');
+		//下面创建放该消息的文本节点，用来存放我们的文本
+		p.appendChild(document.createTextNode(mes));
+		debug.box.appendChild(p);
+	}
+</script>
+<script type="text/javascript">
+	var numbers = 0;
+</script>
+
+<button onclick = "debug('clicked:'+numbers++)">click me </button>
+
+</body>
+</html>
