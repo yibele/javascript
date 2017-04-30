@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>实践题-选项卡</title>
+
+	<style>
+		/* css 制作 */
+	#app{
+		width: 400px;
+		height: 300x;
+		background-color :white;
+	}
+	div.bt{
+		display: inline-table;
+		border:solid #ccc 1px;
+		font-size:12px;
+		width:50px;
+		height: 25px;
+		text-align: center;
+		font-weight: bold;
+		padding-top:5px;	
+	}
+	div.content{
+		display: none;
+		border:solid #ccc 1px;
+		border-top-color: red;
+		border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+	}
+
+	</style>
+
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+<!--html 页面布局-->
+
+<div id='app' >
+	<div class='bt'>房产</div>
+	<div class='bt'>家具</div>
+	<div class='bt'>二手房</div>
+	<div class='content'>
+		275万购昌平邻铁三居 总价20万买一<br>
+	    200万内购五环三居 140万安家东三<br>
+	    北京首现零首付楼盘 53万购东5环50<br>
+	    京楼盘直降5000 中信府 公园楼王现<br>
+    </div>	
+	<div class='content'>
+		40平出租屋大改造 美少女的混搭小<br>
+	    经典清新简欧爱家 90平老房焕发新<br>
+	    新中式的酷色温情 66平撞色活泼家<br>
+	    瓷砖就像选好老婆 卫生间烟道的设<br>
+	</div>
+	<div class='content'>
+		通州豪华3居260万 二环稀缺2居250w<br>
+	    西3环通透2居290万 130万2居限量抢<br>
+	    黄城根小学学区仅260万 121平70万抛<br>
+	    独家别墅280万 苏州桥2居优惠价248<br>
+	</div>	
+</div>
+
+	<script>
+	function lunbo(){
+
+	var bt = document.getElementsByClassName('bt');
+
+	function change(){
+		for(let i=0;i<bt.length;i++){
+				bt[i].onclick=function(){
+					style(i);
+					show(i);
+				}
+			}
+		}
+	function show(e){
+		var content = document.getElementsByClassName('content');
+		var arr = [0,1,2];
+		var arrhide = arr.splice(e,1);
+		content[e].style.display = 'block';
+		for(var i =0;i<arr.length;i++){
+			var num = arr[i];
+			content[num].style.display='none';
+		}
+	}
+
+	function style(e){
+		bt[e].style.borderBottom = '';
+	}
+
+	change();
+}
+
+
+	lunbo();
+	</script>	
+</body>
+</html>

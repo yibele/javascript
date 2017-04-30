@@ -1078,8 +1078,69 @@ headline.setAttribute('align','center');
 +   以下还有一个简单的例子，使用`createElement()`函数创建一个新节点，然后使用`appendChild()`插入到文档中；
 并通过 innerHTML 属性修改里面的内容以及相关操作;
 ```
+## 7 联级样式表和动态HTMl
+### 7.1 用CSS进行元素定位
 
++   position        设置元素应用的定位类型
++   top,left        设置上边界和左边界的位置
++   bottom,rgith    设置下边界和右边界的文职
++   width,height    设置元素的大小
++   z-index         设置元素相对于其他重叠元素“堆叠顺序”，定义元素位置的第三唯
++   display         设置如何和是否显示一个元素
++   visibility      设置元素是否可见
++   clip            定义元素的“裁剪区”，只显示元素在这个区域中的部分
++   overflow        设置当元素比分配给它的空间大时应该采取什么操作
+### 7.1.1 position 性质
 
++   absolute    绝对位置的定位相对于`<body>`标记进行定位，如果被嵌套在另外一个
+绝对定位中，那么相对于那个元素定位.
++   fixed       用这个值可以设置元素在浏览器窗口中的位置，
++   relative    
+### 7.1.2 设置元素的位置和大小
+`<div style="position: absolute; left:100px; top:100px">`   相对于`<body>`元素的位置，但是如果
+在另外一个`absolute`元素中的话，那么就会相对于这个元素的位置.
+
++   首先 width 和 height 只是设置了元素内容区的大小，不包括元素的padding,边线或页边距占用的额外空间.
+所以要确定带边线的元素在屏幕上现实的大小，必须把左右padding，左右border ，上下padding，上下border都
+加上！
++   left和top是根据包容元素的padding的外边界来衡量的！ 简单来说： 如果把left 和padding的值相同，这样
+就可以把内容和元素的边界对上；
+
+### 7.1.3 元素的显示和可见性
++   visibility 和 display  ；
+`visibility`比较简单，当hidden时就不显示元素，但是原先的位置不会被其他元素替代。
+`display`元素等于none是就不显示元素，但是原先的位置会被代替，相当于没有这个元素了.
+### 7.2 脚本样式
++   css的关键在于可以用javascript动态的改变文档中的元素的样式。比如想要屏蔽网页中的广告：
+```
+例如 广告图片的高度和宽度已经知道;
+
+var imgs = getElementByTagName('img');
+for(var i=0; i<imgs.length;i++){
+    if(imgs[i].height ==468 && imgs[i].width==60){
+        imgs[i].style.visibility ='hidden';
+    }
+}
+```
+
+#### 7.2.1 命名规范：javascript中的css性质
++   因为很多css性质都还有 `-`号  , 比如 `font-family` ；但是在javascript中 `-`号被认为是
+减号；因此将 `-` 号删除掉，把第一个字母变成大写;
+`element.style.fontFamily = 'sans-serif';`
+#### 7.2.2 使用样式属性
++   在样式样式属性中，所有的值必须是字符串，因此javascript中所有的之必须要用引号扩起；
+` s.style.postion ='absolute'; s.style.fonFamily ='sans-serif';`
++   另外，记住所有定位属性都要求有单位，所以如下是错误的
+`e.style.left = 300; s.style.left ='300';  `
+必须加上单位;如下是正确的；
+`e.style.left='300px';`
++   所以如果left的值要计算值得话，得在后面加上单位;
+`e.style.left = (x0 + left_margin + left_border + left_padding)+'px';`
+
++   如果要读取css中的值 ， 那么得到的是字符串！所以计算的时候，必须要转成数子；
+比如如下是错误的
+`var totalMarginWidth = e.style.marginLeft + e.style.marginRight;`  这样的话就是得到的是一个字符串，
+`var totalMarginWidth = parseInt(e.style.marginLeft ) + parseInt(e.style.marginRight);
 
 
 

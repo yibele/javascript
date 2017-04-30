@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+
+		ul{
+			list-style-type:none;
+		}
+
+		.hd span.current{
+			background-color:yellow;
+		}
+
+		.bd li{
+			height:225px;
+			display: none;
+		}
+
+		.bd li.current{
+			display: block;
+			width:400px;
+		}
+
+	</style>
+</head>
+<body>
+
+<div class='box'>
+	<div class='hd'>
+		<span class='current'>体育</span>
+		<span>娱乐</span>
+		<span>新闻</span>
+		<span>综合</span>
+	</div>
+	<div class='bd'>
+		<ul>
+			<li class='current'>我是体育模块</li>
+			<li>我是娱乐模块</li>
+			<li>我是新闻模块</li>
+			<li>我们综合模块</li>
+		</ul>
+	</div>
+</div>
+
+<script>
+
+	var box = document.getElementsByClassName('box');
+	var spans = document.getElementsByTagName('span');
+	var lis = document.getElementsByTagName('li');
+
+	for(var i=0;i<lis.length;i++){
+		(function(){
+			spans[i].onclick = function(){
+				this.className = 'current';
+			}
+		})
+	}
+
+</script>
+	
+</body>
+</html>

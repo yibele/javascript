@@ -147,7 +147,8 @@ arr.length = 2; // [1,2]
     splice（）方法是修改Array 的"万能方法" ， 它可以从指定的所以开始删除若干的元素，然后从该位置添加若干元素：
     ```
     var arr = ['Micorosoft', 'Apple','Yahoo','Aol','Excite','Oracle']
-    arr.splice(2,3, 'Google','Facebook'); // 从索引2 开始 ， 然后删除3 个元素 ； 返回删除的元素 ['Yahoo', 'Aol', 'Excite']
+    arr.splice(2,3); // 从索引2 开始 ， 然后删除3 个元素 ； 返回删除的元素 
+    ['Yahoo', 'Aol', 'Excite']
     arr;//  ['Micorosoft', 'Apple','Google','Facebook','Excite','Oracle']
     arr.splice(2,2); //从索引2 开始 删除两个元素
     ```
